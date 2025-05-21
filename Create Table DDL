@@ -1,0 +1,92 @@
+CREATE TABLE Denver_Canopy_Assessment (
+	FIPS_code VARCHAR(20),
+	tree_canopy_pct NUMERIC(5,2),
+	num_trees NUMERIC (10,2),
+	num_plant_sites NUMERIC (10,2),
+	CONSTRAINT den_can_assess_pk PRIMARY KEY (FIPS_code, tree_canopy_pct)
+);
+
+CREATE TABLE Income_Poverty (
+	census_tract_name VARCHAR(20),
+	percent_poverty NUMERIC(5,2),
+	mean_income NUMERIC(12,2) NOT NULL,
+	FIPS_code VARCHAR(20),
+	CONSTRAINT income_poverty_pk PRIMARY KEY (census_tract_name, percent_poverty)
+);
+
+
+CREATE TABLE Asthma_Hospt_Rates(
+	census_tract_name VARCHAR (20),
+	asthma_tract_hosp_rate NUMERIC (10,2),
+	FIPS_code VARCHAR (20),
+	asthma_state_hosp_rate NUMERIC (10,2),
+	CONSTRAINT asthma_hosp_rate_pk PRIMARY KEY (census_tract_name, asthma_tract_hosp_rate)
+);
+
+CREATE TABLE Heart_Disease_Mort_Rates(
+	census_tract_name VARCHAR (20),
+	HD_tract_mort_rate NUMERIC (10,2),
+	FIPS_code VARCHAR (20),
+	HD_state_mort_rate NUMERIC (10,2),
+	CONSTRAINT heart_disease_mort_pk PRIMARY KEY (census_tract_name, HD_tract_mort_rate)
+);
+
+CREATE TABLE Adult_Asthma_Prevalence (
+	census_tract_name VARCHAR (20),
+	asthma_tract_estimate NUMERIC (10,2),
+	FIPS_code VARCHAR(20),
+	asthma_state_estimate NUMERIC(10,2),
+	CONSTRAINT adult_asthma_prev_pk PRIMARY KEY (census_tract_name, asthma_tract_estimate)
+);
+
+
+CREATE TABLE Poverty_Tree_pct (
+	census_tract_name VARCHAR (20),
+	FIPS_code VARCHAR(20),
+	tree_canopy_pct NUMERIC(5,2),
+	percent_poverty NUMERIC(5,2),
+	CONSTRAINT poverty_tree_pk PRIMARY KEY (census_tract_name, FIPS_code, tree_canopy_pct, percent_poverty),
+	CONSTRAINT poverty_tree_fk1 FOREIGN KEY (FIPS_code, tree_canopy_pct)
+		REFERENCES Denver_Canopy_Assessment (FIPS_code, tree_canopy_pct),
+	CONSTRAINT poverty_tree_fk2 FOREIGN KEY (census_tract_name, percent_poverty)
+		REFERENCES Income_Poverty (census_tract_name, percent_poverty)
+);
+
+CREATE TABLE Asthma_Hosp_Tree_pct (
+	census_tract_name VARCHAR (20),
+	FIPS_code VARCHAR(20),
+	asthma_tract_hosp_rate NUMERIC (10,2),
+	tree_canopy_pct NUMERIC(5,2),
+	asthma_state_hosp_rate NUMERIC (10,2),
+	CONSTRAINT Asthma_Hosp_Tree_pct_pk PRIMARY KEY (census_tract_name, FIPS_code, asthma_tract_hosp_rate, tree_canopy_pct),
+	CONSTRAINT Asthma_Hosp_Tree_pct_fk1 FOREIGN KEY (census_tract_name, asthma_tract_hosp_rate) REFERENCES Asthma_Hospt_Rates (census_tract_name, asthma_tract_hosp_rate),
+	CONSTRAINT Asthma_Hosp_Tree_pct_fk2 FOREIGN KEY (FIPS_code, tree_canopy_pct)
+		REFERENCES Denver_Canopy_Assessment (FIPS_code, tree_canopy_pct)
+);
+
+CREATE TABLE Asthma_Prevalence_Tree_pct (
+	census_tract_name VARCHAR (20),
+	FIPS_code VARCHAR(20),
+	asthma_tract_estimate NUMERIC (10,2),
+	tree_canopy_pct NUMERIC(5,2),
+	asthma_state_estimate NUMERIC (10,2),
+	CONSTRAINT asthma_prevalence_tree_pct_pk PRIMARY KEY (census_tract_name, FIPS_code, asthma_tract_estimate, tree_canopy_pct),
+	CONSTRAINT asthma_prevalence_tree_pct_fk1 FOREIGN KEY (census_tract_name, asthma_tract_estimate)
+		REFERENCES Adult_Asthma_Prevalence (census_tract_name, asthma_tract_estimate),
+	CONSTRAINT asthma_prevalence_tree_pct_fk2 FOREIGN KEY (FIPS_code, tree_canopy_pct)
+		REFERENCES Denver_Canopy_Assessment (FIPS_code, tree_canopy_pct)
+);
+
+
+CREATE TABLE HD_mort_tree_pct (
+	census_tract_name VARCHAR (20),
+	FIPS_code VARCHAR(20),
+	HD_tract_mort_rate NUMERIC (10,2),
+	tree_canopy_pct NUMERIC(5,2),
+	HD_state_mort_rate NUMERIC (10,2),
+	CONSTRAINT HD_mort_tree_pct_pk PRIMARY KEY (census_tract_name, FIPS_code, HD_tract_mort_rate, tree_canopy_pct),
+	CONSTRAINT HD_mort_tree_pct_fk1 FOREIGN KEY (census_tract_name, HD_tract_mort_rate)
+		REFERENCES Heart_Disease_Mort_Rates (census_tract_name, HD_tract_mort_rate),
+	CONSTRAINT HD_mort_tree_pct_fk2 FOREIGN KEY (FIPS_code, tree_canopy_pct)
+		REFERENCES Denver_Canopy_Assessment (FIPS_code, tree_canopy_pct)
+);
